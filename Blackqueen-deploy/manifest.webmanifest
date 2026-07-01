@@ -1,0 +1,33 @@
+{
+  "name": "Blackqueen",
+  "short_name": "Blackqueen",
+  "description": "Live multiplayer strategy card game for 6 to 8 players.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f7fa",
+  "theme_color": "#1d6b58",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/icons/blackqueen-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/blackqueen-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/blackqueen-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

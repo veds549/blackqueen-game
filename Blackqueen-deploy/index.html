@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1d6b58" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Blackqueen" />
+    <title>Blackqueen</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/blackqueen-192.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/blackqueen-180.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Strategy card game</p>
+          <h1>Blackqueen</h1>
+        </div>
+        <div class="round-strip">
+          <button class="rules-button" id="openRulesBtn" type="button">Rules</button>
+          <button class="install-button" id="installAppBtn" type="button" hidden>Install app</button>
+          <span id="roundLabel">Round 1</span>
+          <span id="dealerLabel">Dealer: Player 1</span>
+          <span id="deckLabel">104 cards</span>
+        </div>
+      </header>
+
+      <nav class="stage-tabs" aria-label="Game stages">
+        <button class="tab is-active" data-stage="setup">Setup</button>
+        <button class="tab" data-stage="deal">Deal</button>
+        <button class="tab" data-stage="bid">Bid</button>
+        <button class="tab" data-stage="call">Call</button>
+        <button class="tab" data-stage="play">Play</button>
+        <button class="tab" data-stage="score">Score</button>
+      </nav>
+
+      <section class="status-band" id="statusBand">
+        Set up the table, trim the deck, then start the first hand.
+      </section>
+
+      <section class="stage is-active" id="setupStage">
+        <div class="setup-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <h2>Table</h2>
+              <button class="icon-button" id="resetBtn" title="Reset game" aria-label="Reset game">↻</button>
+            </div>
+            <label class="field">
+              <span>Players</span>
+              <select id="playerCount">
+                <option value="6">6 players</option>
+                <option value="7">7 players</option>
+                <option value="8">8 players</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Team format</span>
+              <select id="teamFormat"></select>
+            </label>
+            <label class="field">
+              <span>Partner reveal</span>
+              <select id="partnerMode">
+                <option value="firstTwo">First 2 partner cards shown</option>
+                <option value="oneEach">One of each called card</option>
+              </select>
+            </label>
+            <div class="multiplayer-box" id="multiplayerBox">
+              <div class="panel-head tight">
+                <h2>Multiplayer table</h2>
+                <span class="pill" id="roleLabel">Local</span>
+              </div>
+              <button class="primary-action compact" id="createTableBtn">Create host table</button>
+              <div class="join-links" id="joinLinks"></div>
+            </div>
+            <div class="names-list" id="namesList"></div>
+          </section>
+
+          <section class="panel deck-panel">
+            <div class="panel-head">
+              <h2>Deck</h2>
+              <span class="pill">2 decks, no jokers</span>
+            </div>
+            <label class="field">
+              <span>Cards per player</span>
+              <select id="cardsPerPlayer"></select>
+            </label>
+            <div class="deck-summary">
+              <strong id="trimSummary">104 cards in play</strong>
+              <span id="trimHint">Choose a target hand size to remove lower cards.</span>
+            </div>
+            <div class="rank-removal" id="rankRemoval"></div>
+            <div class="suit-keep-box">
+              <div class="panel-head tight">
+                <h2>Keep from final removed set</h2>
+                <span class="pill" id="partialRankLabel">No partial set</span>
+              </div>
+              <div class="suit-keep-options" id="suitKeepOptions"></div>
+            </div>
+          </section>
+        </div>
+        <button class="primary-action" id="startHandBtn">Start hand</button>
+      </section>
+
+      <section class="stage" id="dealStage">
+        <div class="two-col">
+          <section class="panel">
+            <h2>Deal</h2>
+            <p class="quiet">Dealer starts from the left and deals clockwise.</p>
+            <label class="field">
+              <span>Dealer</span>
+              <select id="dealerSelect"></select>
+            </label>
+            <label class="field">
+              <span>Deal pattern</span>
+              <input id="dealPattern" value="1" />
+            </label>
+            <button class="primary-action compact" id="dealBtn">Deal cards</button>
+          </section>
+          <section class="panel">
+            <h2>Hands</h2>
+            <div class="player-overview" id="dealOverview"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="stage" id="bidStage">
+        <div class="bid-grid">
+          <section class="panel">
+            <h2>Bidding</h2>
+            <div class="bid-box">
+              <span id="bidTurnLabel">Turn: Player 2</span>
+              <strong id="highestBidLabel">Minimum bid: 155</strong>
+            </div>
+            <div class="bid-controls">
+              <button id="passBidBtn">Pass</button>
+              <button id="raiseBidBtn">Bid +5</button>
+              <button id="setBidderBtn">Lock highest bidder</button>
+            </div>
+          </section>
+          <section class="panel">
+            <h2>Bid history</h2>
+            <div class="history" id="bidHistory"></div>
+          </section>
+          <section class="panel bid-hand-panel">
+            <div class="panel-head">
+              <h2>Player hand</h2>
+              <label class="field inline-field">
+                <span>Player</span>
+                <select id="bidHandPlayer"></select>
+              </label>
+            </div>
+            <a class="hand-link" id="playerHandLink" href="#" target="_blank" rel="noreferrer">Open player hand</a>
+            <div class="cards bid-hand-view" id="bidHandView"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="stage" id="callStage">
+        <div class="two-col">
+          <section class="panel">
+            <h2>Bidder call</h2>
+            <label class="field">
+              <span>Bidder</span>
+              <select id="bidderSelect"></select>
+            </label>
+            <label class="field">
+              <span>Bid points</span>
+              <input id="bidAmount" type="number" min="155" step="5" value="155" />
+            </label>
+            <label class="field">
+              <span>Cut colour</span>
+              <select id="trumpSuit">
+                <option value="S">Spades</option>
+                <option value="H">Hearts</option>
+                <option value="D">Diamonds</option>
+                <option value="C">Clubs</option>
+              </select>
+            </label>
+            <div class="partner-picks">
+              <label class="field">
+                <span>Partner card 1</span>
+                <select id="partnerCardA"></select>
+              </label>
+              <label class="field">
+                <span>Partner card 2</span>
+                <select id="partnerCardB"></select>
+              </label>
+            </div>
+            <button class="primary-action compact" id="confirmCallBtn">Confirm call</button>
+          </section>
+          <section class="panel">
+            <h2>Call summary</h2>
+            <div id="callSummary" class="call-summary">No call yet.</div>
+            <div class="call-hand-block">
+              <div class="panel-head tight">
+                <h2>Bidder's hand</h2>
+                <span class="pill" id="callHandCount">0 cards</span>
+              </div>
+              <div class="cards call-hand-view" id="callHandView"></div>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="stage" id="playStage">
+        <div class="play-layout">
+          <section class="table-panel">
+            <div class="table-center">
+              <div>
+                <p class="eyebrow">Current trick</p>
+                <h2 id="trickLabel">Trick 1</h2>
+              </div>
+              <div class="call-details" id="playCallDetails"></div>
+              <div class="trick-area" id="trickArea"></div>
+              <div class="score-mini">
+                <span id="biddingPoints">Bidding team: 0</span>
+                <span id="defensePoints">Non-bidders: 0</span>
+              </div>
+            </div>
+          </section>
+          <section class="hands-panel" id="handsPanel"></section>
+        </div>
+      </section>
+
+      <section class="stage" id="scoreStage">
+        <div class="two-col">
+          <section class="panel">
+            <h2>Round result</h2>
+            <div id="roundResult" class="round-result">Finish the hand to score.</div>
+            <div class="score-actions">
+              <button class="primary-action compact" id="scoreRoundBtn">Score round</button>
+              <button class="compact secondary" id="nextHandBtn">Next hand</button>
+            </div>
+          </section>
+          <section class="panel">
+            <h2>Scoreboard</h2>
+            <div id="scoreboard" class="scoreboard"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <button class="chat-launcher" id="chatLauncher" type="button" aria-controls="chatPanel" aria-expanded="false">
+      <span aria-hidden="true">Chat</span>
+      <span class="chat-badge" id="chatBadge" hidden>0</span>
+    </button>
+    <aside class="chat-panel" id="chatPanel" aria-label="Table chat" hidden>
+      <div class="chat-head">
+        <div>
+          <p class="eyebrow">Live table</p>
+          <h2>Game chat</h2>
+        </div>
+        <button class="icon-button" id="chatCloseBtn" type="button" title="Close chat" aria-label="Close chat">&#215;</button>
+      </div>
+      <div class="chat-messages" id="chatMessages" aria-live="polite"></div>
+      <form class="chat-form" id="chatForm">
+        <label class="sr-only" for="chatInput">Message</label>
+        <input id="chatInput" maxlength="300" autocomplete="off" placeholder="Message the table" />
+        <button class="primary-action compact" id="chatSendBtn" type="submit">Send</button>
+      </form>
+      <p class="chat-note" id="chatNote">Create or join a multiplayer table to chat.</p>
+    </aside>
+
+    <dialog class="rulebook" id="rulebookDialog" aria-labelledby="rulebookTitle">
+      <div class="rulebook-head">
+        <div>
+          <p class="eyebrow">Official game guide</p>
+          <h2 id="rulebookTitle">Blackqueen Rulebook</h2>
+        </div>
+        <button class="icon-button" id="closeRulesBtn" type="button" title="Close rulebook" aria-label="Close rulebook">&#215;</button>
+      </div>
+      <div class="rulebook-body">
+        <section>
+          <h3>1. Table setup</h3>
+          <p>Blackqueen is played by 6 to 8 players using two standard 52-card decks with no jokers.</p>
+          <ul>
+            <li>6 players: 3 vs 3</li>
+            <li>7 players: 3 vs 4</li>
+            <li>8 players: 3 vs 5 or 4 vs 4</li>
+          </ul>
+          <p>The host chooses the player count, team format, partner reveal rule, cards per player, and deck trimming before the hand begins.</p>
+        </section>
+
+        <section>
+          <h3>2. Deck trimming</h3>
+          <p>Every player must receive the same number of cards. The host may remove sets of 2s, 3s, 4s, 6s, and 7s. Fives cannot be removed because they carry points.</p>
+          <p>When an exact total needs part of a four-card set, the host may keep selected suits from the final removed set. Example: 7 players with 11 cards each requires 77 cards, so all 2s, 3s, and 4s are removed, one set of 6s is removed, and one selected 6 is kept.</p>
+        </section>
+
+        <section>
+          <h3>3. Point cards</h3>
+          <div class="rule-points">
+            <span><strong>Every 5</strong> 5 points</span>
+            <span><strong>Every 10</strong> 10 points</span>
+            <span><strong>Every Ace</strong> 15 points</span>
+            <span><strong>Queen of Spades</strong> 30 points</span>
+          </div>
+          <p>Across both decks, the complete deck contains 300 points.</p>
+        </section>
+
+        <section>
+          <h3>4. Dealing</h3>
+          <p>The dealer starts with the player on the left and deals clockwise. The dealer may deal in any equal pattern, such as 1 card at a time, all cards together, or batches such as 7 and 7.</p>
+          <p>The deck is shuffled thoroughly before the first hand. Later hands receive only a light shuffle.</p>
+        </section>
+
+        <section>
+          <h3>5. Bidding</h3>
+          <p>Bidding begins with the player to the dealer's left. The minimum bid is 155 points and bids rise in steps of 5. Players may bid or pass. The highest remaining bidder wins the call.</p>
+        </section>
+
+        <section>
+          <h3>6. Cut colour and partners</h3>
+          <p>The bidder chooses the cut colour and two partner-card calls. Partners remain hidden until a called card is played.</p>
+          <p>Under <strong>First two shown</strong>, the first two matching called cards played reveal the partners. Under <strong>One of each</strong>, one player is claimed by each distinct called card.</p>
+          <p>A player who reveals multiple valid partner cards becomes a double or triple partner. The bidder may also gain additional partner multipliers by holding and playing called cards.</p>
+        </section>
+
+        <section>
+          <h3>7. Trick play</h3>
+          <p>The bidder leads the first trick. Players must follow the led suit when possible. A player without that suit may play any card, including the cut colour.</p>
+          <p>The highest cut-colour card wins the trick. If no cut card is played, the highest card of the led suit wins. Rank order is Ace, King, Queen, Jack, 10 down to 2. With duplicate equal cards, the first one played remains higher.</p>
+          <p>The trick winner collects its point cards and leads the next trick.</p>
+        </section>
+
+        <section>
+          <h3>8. Scoring</h3>
+          <p>If the bidding team captures at least its bid, the bidder and partners each receive the bid value. If the call is broken, bidding-team members lose the bid value and every non-bidder receives half the bid, rounded to a whole number.</p>
+          <p>A double or triple partner's award or loss is multiplied by that partner count. Example: on a successful 180 bid, a double partner receives 360. On a failed bid, that player receives -360.</p>
+        </section>
+      </div>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>

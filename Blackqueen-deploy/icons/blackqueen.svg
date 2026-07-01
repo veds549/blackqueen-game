@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="184" fill="#1d6b58"/>
+  <rect x="208" y="104" width="608" height="816" rx="64" fill="#ffffff" stroke="#17202c" stroke-width="20"/>
+  <text x="278" y="238" text-anchor="middle" font-family="Georgia, serif" font-size="132" font-weight="700" fill="#17202c">Q</text>
+  <path d="M278 264c-70 86-108 134-108 184 0 53 43 96 96 96 17 0 34-5 48-13-9 39-28 70-57 91h132c-29-21-48-52-57-91 14 8 31 13 48 13 53 0 96-43 96-96 0-50-38-98-108-184-37-45-66-80-90-113-24 33-53 68-90 113z" fill="#17202c" transform="translate(234 116) scale(.78)"/>
+  <g transform="rotate(180 512 512)">
+    <text x="278" y="238" text-anchor="middle" font-family="Georgia, serif" font-size="132" font-weight="700" fill="#17202c">Q</text>
+    <path d="M278 264c-70 86-108 134-108 184 0 53 43 96 96 96 17 0 34-5 48-13-9 39-28 70-57 91h132c-29-21-48-52-57-91 14 8 31 13 48 13 53 0 96-43 96-96 0-50-38-98-108-184-37-45-66-80-90-113-24 33-53 68-90 113z" fill="#17202c" transform="translate(234 116) scale(.78)"/>
+  </g>
+  <path d="M512 306c-118 143-183 225-183 307 0 91 74 165 165 165 34 0 66-10 93-28-16 73-48 121-97 158h198c-49-37-81-85-97-158 27 18 59 28 93 28 91 0 165-74 165-165 0-82-65-164-183-307-65-79-113-139-154-199-41 60-89 120-154 199z" fill="#17202c" transform="translate(128 42) scale(.75)"/>
+</svg>
